@@ -20,7 +20,7 @@ setup(
     maintainer_email='leo.singer@ligo.org',
     license='MIT',
     url='https://github.com/lpsinger/pytest-doctest-ufunc',
-    description='A plugin to run doctests defined in docstrings of Numpy ufuncs',
+    description='A plugin to run doctests in docstrings of Numpy ufuncs',
     long_description=read('README.rst'),
     py_modules=['pytest_doctest_ufunc'],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',

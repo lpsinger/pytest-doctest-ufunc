@@ -37,7 +37,6 @@ def _is_numpy_ufunc(method):
 class DoctestModule(pytest.Module):
 
     def collect(self):
-        import numpy as np
         # Copied from pytest
         import doctest
         if self.fspath.basename == "conftest.py":
