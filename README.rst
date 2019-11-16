@@ -25,18 +25,6 @@ A plugin to run doctests defined in docstrings of Numpy ufuncs
 This `pytest`_ plugin was generated with `Cookiecutter`_ along with `@hackebrot`_'s `cookiecutter-pytest-plugin`_ template.
 
 
-Features
---------
-
-* TODO
-
-
-Requirements
-------------
-
-* TODO
-
-
 Installation
 ------------
 
