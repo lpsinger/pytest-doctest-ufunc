@@ -33,11 +33,6 @@ You can install "pytest-doctest-ufunc" via `pip`_ from `PyPI`_::
     $ pip install pytest-doctest-ufunc
 
 
-Usage
------
-
-* TODO
-
 Contributing
 ------------
 Contributions are very welcome. Tests can be run with `tox`_, please ensure
