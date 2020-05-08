@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='pytest-doctest-ufunc',
-    version='0.1.0',
+    version='0.1.1',
     author='Leo Singer',
     author_email='leo.singer@ligo.org',
     maintainer='Leo Singer',
