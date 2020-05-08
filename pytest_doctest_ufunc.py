@@ -2,13 +2,20 @@
 
 import pytest
 from _pytest.doctest import _get_checker, get_optionflags, DoctestItem
-from _pytest.doctest import _is_setup_py
 
 
 def pytest_addoption(parser):
     help_msg = 'enable doctests that are in docstrings of Numpy ufuncs'
     parser.addoption('--doctest-ufunc', action='store_true', help=help_msg)
     parser.addini('doctest_ufunc', help_msg, default=False)
+
+
+# Copied from pytest.doctest
+def _is_setup_py(path):
+    if path.basename != "setup.py":
+        return False
+    contents = path.read_binary()
+    return b"setuptools" in contents or b"distutils" in contents
 
 
 def _is_enabled(config):
@@ -19,7 +26,7 @@ def pytest_collect_file(path, parent):
     # Addapted from pytest.doctest
     config = parent.config
     if path.ext == ".py":
-        if _is_enabled(config) and not _is_setup_py(config, path, parent):
+        if _is_enabled(config) and not _is_setup_py(path):
             return DoctestModule(path, parent)
 
 
