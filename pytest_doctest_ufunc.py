@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from packaging.version import Version
 import pytest
 from _pytest.doctest import _get_checker, get_optionflags, DoctestItem
+
+# Copied from pytest-doctestplus
+PYTEST_GT_5 = Version(pytest.__version__) > Version('5.9.9')
 
 
 def pytest_addoption(parser):
@@ -27,7 +31,7 @@ def pytest_collect_file(path, parent):
     config = parent.config
     if path.ext == ".py":
         if _is_enabled(config) and not _is_setup_py(path):
-            return DoctestModule(path, parent)
+            return DoctestModule.from_parent(parent, fspath=path)
 
 
 def _is_numpy_ufunc(method):
@@ -44,10 +48,16 @@ def _is_numpy_ufunc(method):
 class DoctestModule(pytest.Module):
 
     def collect(self):
-        # Copied from pytest
+        # Adapted from pytest
         import doctest
         if self.fspath.basename == "conftest.py":
-            module = self.config.pluginmanager._importconftest(self.fspath)
+            # Copied from pytest-doctestplus
+            if PYTEST_GT_5:
+                module = self.config.pluginmanager._importconftest(
+                    self.fspath, self.config.getoption("importmode"))
+            else:
+                module = self.config.pluginmanager._importconftest(
+                    self.fspath)
         else:
             try:
                 module = self.fspath.pyimport()
