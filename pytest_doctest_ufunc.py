@@ -77,4 +77,5 @@ class DoctestModule(pytest.Module):
             if _is_numpy_ufunc(method):
                 for test in finder.find(method, module=module):
                     if test.examples:  # skip empty doctests
-                        yield DoctestItem(test.name, self, runner, test)
+                        yield DoctestItem.from_parent(
+                            self, name=test.name, runner=runner, dtest=test)

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys
+import glob
 
 
 def test_help_message(testdir):
@@ -10,3 +12,26 @@ def test_help_message(testdir):
         '*--doctest-ufunc*enable doctests that are '
         'in docstrings of Numpy ufuncs',
     ])
+
+
+def test_example(testdir):
+    # Create and build example module
+    testdir.copy_example('_module2.c')
+    testdir.copy_example('module1.py')
+    testdir.copy_example('module2.py')
+    testdir.copy_example('setup.py')
+    testdir.run(sys.executable, 'setup.py', 'build')
+    build_dir, = glob.glob(str(testdir.tmpdir / 'build/lib.*'))
+
+    # Run pytest without doctests: 0 tests run
+    result = testdir.runpytest(build_dir)
+    result.assert_outcomes(passed=0, failed=0)
+
+    # Run pytest with doctests: 1 test run
+    result = testdir.runpytest(build_dir, '--doctest-modules')
+    result.assert_outcomes(passed=1, failed=0)
+
+    # Run pytest with doctests including ufuncs: 2 tests run
+    result = testdir.runpytest(build_dir,
+                               '--doctest-modules', '--doctest-ufunc')
+    result.assert_outcomes(passed=2, failed=0)

@@ -4,13 +4,22 @@
 environment:
   matrix:
     - PYTHON: "C:\\Python36"
-      TOX_ENV: "py36"
+      TOX_ENV: "py36-pytest5"
 
     - PYTHON: "C:\\Python37"
-      TOX_ENV: "py37"
+      TOX_ENV: "py37-pytest5"
 
     - PYTHON: "C:\\Python38"
-      TOX_ENV: "py38"
+      TOX_ENV: "py38-pytest5"
+
+    - PYTHON: "C:\\Python36"
+      TOX_ENV: "py36-pytest6"
+
+    - PYTHON: "C:\\Python37"
+      TOX_ENV: "py37-pytest6"
+
+    - PYTHON: "C:\\Python38"
+      TOX_ENV: "py38-pytest6"
 
 init:
   - "%PYTHON%/python -V"
