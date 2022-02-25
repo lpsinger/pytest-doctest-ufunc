@@ -1,3 +1,6 @@
+This project is no longer maintained. Its functionality has been incorporated
+into `pytest-doctestplus <https://github.com/astropy/pytest-doctestplus>`_.
+
 ====================
 pytest-doctest-ufunc
 ====================

@@ -26,7 +26,7 @@ setup(
     python_requires='>=3.6',
     install_requires=['numpy', 'pytest>=3.5.0'],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 7 - Inactive',
         'Framework :: Pytest',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Testing',
