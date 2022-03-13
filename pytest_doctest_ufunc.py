@@ -5,7 +5,11 @@ import pytest
 from _pytest.doctest import _get_checker, get_optionflags, DoctestItem
 
 # Copied from pytest-doctestplus
-PYTEST_GT_5 = Version(pytest.__version__) > Version('5.9.9')
+_pytest_version = Version(pytest.__version__)
+PYTEST_GT_5 = _pytest_version > Version('5.9.9')
+PYTEST_GE_7_0 = any([_pytest_version.is_devrelease,
+                     _pytest_version.is_prerelease,
+                     _pytest_version >= Version('7.0')])
 
 
 def pytest_addoption(parser):
@@ -50,9 +54,23 @@ class DoctestModule(pytest.Module):
     def collect(self):
         # Adapted from pytest
         import doctest
-        if self.fspath.basename == "conftest.py":
-            # Copied from pytest-doctestplus
-            if PYTEST_GT_5:
+        # When running directly from pytest we need to make sure that we
+        # don't accidentally import setup.py!
+        if PYTEST_GE_7_0:
+            fspath = self.path
+            filepath = self.path.name
+        else:
+            fspath = self.fspath
+            filepath = self.fspath.basename
+
+        if filepath == "setup.py":
+            return
+        elif filepath == "conftest.py":
+            if PYTEST_GE_7_0:
+                module = self.config.pluginmanager._importconftest(
+                    self.path, self.config.getoption("importmode"),
+                    rootpath=self.config.rootpath)
+            elif PYTEST_GT_5:
                 module = self.config.pluginmanager._importconftest(
                     self.fspath, self.config.getoption("importmode"))
             else:
@@ -60,17 +78,27 @@ class DoctestModule(pytest.Module):
                     self.fspath)
         else:
             try:
-                module = self.fspath.pyimport()
+                if PYTEST_GT_5:
+                    from _pytest.pathlib import import_path
+
+                if PYTEST_GE_7_0:
+                    module = import_path(fspath, root=self.config.rootpath)
+                elif PYTEST_GT_5:
+                    module = import_path(fspath)
+                else:
+                    module = fspath.pyimport()
             except ImportError:
-                if self.config.getvalue('doctest_ignore_import_errors'):
-                    pytest.skip('unable to import module %r' % self.fspath)
+                if self.config.getvalue("doctest_ignore_import_errors"):
+                    pytest.skip("unable to import module %r" % fspath)
                 else:
                     raise
+
+        options = get_optionflags(self)
+
         # uses internal doctest module parsing mechanism
         finder = doctest.DocTestFinder()
-        optionflags = get_optionflags(self)
-        runner = doctest.DebugRunner(verbose=0, optionflags=optionflags,
-                                     checker=_get_checker())
+        runner = doctest.DebugRunner(
+            verbose=False, optionflags=options, checker=_get_checker())
         # End copied from pytest
 
         for method in module.__dict__.values():
